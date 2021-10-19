@@ -146,11 +146,27 @@ def iterate_pagerank(corpus, damping_factor):
     # Make a dict of where the key is the page p and the values are the pages i linking to p
     linking = dict()
     for p in corpus:
-        for j in corpus[p]:
-            if j in linking:
-                linking[j].add(p)
-            else:
-                linking[j] = {p}
+
+        # If p has no links, p is considered as having a link to every page including itself
+        if len(corpus[p]) == 0:
+            for k in corpus:
+                if k in linking:
+                    linking[k].add(p)
+                else:
+                    linking[k] = {p}
+
+        # If p has links
+        else:
+            for j in corpus[p]:
+                if j in linking:
+                    linking[j].add(p)
+                else:
+                    linking[j] = {p}
+
+    # Check for pages that are not linked by other pages
+    not_linked = set(corpus.keys()) - set(linking.keys())
+    for p in not_linked:
+        linking[p] = set()
            
     while(True):
     # For each page p
@@ -161,7 +177,13 @@ def iterate_pagerank(corpus, damping_factor):
             for i in linking[p]:
 
                 # Sum d * PR(i) / NumLinks(i) for each i
-                s = s + page_rank[i] / len(corpus[i])
+                if len(corpus[i]) != 0:
+                    s = s + page_rank[i] / len(corpus[i]) 
+
+                # If p has no links, p is considered as having a link to every page including itself
+                else:
+                    s = s + page_rank[i] / len(corpus) 
+                    #s = s + 0
 
             # Complete PR formula
             new_rank = (1 - damping_factor) / n + damping_factor * s
@@ -170,11 +192,20 @@ def iterate_pagerank(corpus, damping_factor):
         
         stop = True
         for delta in list(delta_pr.values()):
-            if delta >= 0.001:
+            if delta >= 0.00001:
                 stop = False
 
         if stop:
             break
+        
+    print("sum1: ", sum(list(page_rank.values())))
+    # Normalise values
+    
+    s = sum(list(page_rank.values()))
+    for p in page_rank:
+        page_rank.update({p : page_rank[p] / s})
+
+    print("sum2: ", sum(list(page_rank.values())))
 
     return page_rank
 
