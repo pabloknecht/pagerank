@@ -183,7 +183,6 @@ def iterate_pagerank(corpus, damping_factor):
                 # If p has no links, p is considered as having a link to every page including itself
                 else:
                     s = s + page_rank[i] / len(corpus) 
-                    #s = s + 0
 
             # Complete PR formula
             new_rank = (1 - damping_factor) / n + damping_factor * s
@@ -198,14 +197,10 @@ def iterate_pagerank(corpus, damping_factor):
         if stop:
             break
         
-    print("sum1: ", sum(list(page_rank.values())))
-    # Normalise values
-    
+    # Normalize values
     s = sum(list(page_rank.values()))
     for p in page_rank:
         page_rank.update({p : page_rank[p] / s})
-
-    print("sum2: ", sum(list(page_rank.values())))
 
     return page_rank
 
