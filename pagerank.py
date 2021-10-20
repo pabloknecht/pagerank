@@ -5,7 +5,7 @@ import sys
 import copy
 
 DAMPING = 0.85
-SAMPLES = 10000
+SAMPLES = 1000
 
 
 def main():
@@ -191,7 +191,7 @@ def iterate_pagerank(corpus, damping_factor):
         
         stop = True
         for delta in list(delta_pr.values()):
-            if delta >= 0.00001:
+            if delta >= 0.001:
                 stop = False
 
         if stop:
